@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PulseChain</title>
+<link rel="stylesheet" href="/static/style.css">
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+async function api(path, options) {
+  const res = await fetch("/api" + path, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.detail || "Request failed");
+  }
+  return res.json();
+}
+
+function Field({ label, children }) {
+  return (
+    <label className="field">
+      <span>{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function Select({ value, onChange, items }) {
+  return (
+    <select value={value} onChange={(e) => onChange(e.target.value)}>
+      {items.map((i) => (
+        <option key={i} value={i}>{i}</option>
+      ))}
+    </select>
+  );
+}
+
+function PredictPage({ options }) {
+  const [form, setForm] = useState({
+    vendor: options.vendors[0],
+    country: "Rwanda",
+    shipment_mode: "Air",
+    inco_term: "N/A - From RDC",
+    fulfill_via: "From RDC",
+    product_group: "ARV",
+    quantity: 5000,
+    value: 50000,
+    planned_lead_time_days: "",
+    weight_kg: "",
+    freight_cost_usd: "",
+  });
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const set = (k) => (v) => setForm({ ...form, [k]: v });
+  const num = (v) => (v === "" ? null : Number(v));
+
+  async function submit(e) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const body = {
+        ...form,
+        quantity: Number(form.quantity),
+        value: Number(form.value),
+        planned_lead_time_days: num(form.planned_lead_time_days),
+        weight_kg: num(form.weight_kg),
+        freight_cost_usd: num(form.freight_cost_usd),
+      };
+      setResult(await api("/predict", { method: "POST", body: JSON.stringify(body) }));
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  }
+
+  return (
+    <div className="grid two">
+      <form className="card" onSubmit={submit}>
+        <h2>Shipment details</h2>
+        <div className="grid two">
+          <Field label="Vendor"><Select value={form.vendor} onChange={set("vendor")} items={options.vendors} /></Field>
+          <Field label="Destination country"><Select value={form.country} onChange={set("country")} items={options.countries} /></Field>
+          <Field label="Shipment mode"><Select value={form.shipment_mode} onChange={set("shipment_mode")} items={options.shipment_modes} /></Field>
+          <Field label="Vendor INCO term"><Select value={form.inco_term} onChange={set("inco_term")} items={options.inco_terms} /></Field>
+          <Field label="Fulfilled via"><Select value={form.fulfill_via} onChange={set("fulfill_via")} items={options.fulfill_via} /></Field>
+          <Field label="Product group"><Select value={form.product_group} onChange={set("product_group")} items={options.product_groups} /></Field>
+          <Field label="Quantity"><input type="number" value={form.quantity} onChange={(e) => set("quantity")(e.target.value)} /></Field>
+          <Field label="Line item value (USD)"><input type="number" value={form.value} onChange={(e) => set("value")(e.target.value)} /></Field>
+          <Field label="Planned lead time (days, optional)"><input type="number" value={form.planned_lead_time_days} onChange={(e) => set("planned_lead_time_days")(e.target.value)} /></Field>
+          <Field label="Weight kg (optional)"><input type="number" value={form.weight_kg} onChange={(e) => set("weight_kg")(e.target.value)} /></Field>
+        </div>
+        <button className="btn" disabled={loading}>{loading ? "Predicting..." : "Predict delay risk"}</button>
+        {error && <p className="error">{error}</p>}
+      </form>
+
+      <div className="card">
+        <h2>Risk assessment</h2>
+        {!result && <p className="muted">Fill in the shipment details and press Predict.</p>}
+        {result && (
+          <div>
+            <div className={"badge " + result.risk_band}>{result.risk_band.toUpperCase()} RISK</div>
+            <p className="big">{(result.probability_late * 100).toFixed(1)}% chance of late delivery</p>
+            <div className="bar"><div className={"fill " + result.risk_band} style={{ width: result.probability_late * 100 + "%" }} /></div>
+            <p className="muted small">Source: {result.source}</p>
+            <h3>Why this score</h3>
+            <ul className="reasons">
+              {result.reasons.map((r, i) => (
+                <li key={i}>
+                  <strong>{r.feature}</strong> <span className={r.direction === "raises risk" ? "up" : "down"}>{r.direction}</span>
+                  <span className="muted"> ({r.impact})</span>
+                </li>
+              ))}
+              {result.reasons.length === 0 && <li className="muted">No explanation available.</li>}
+            </ul>
+            {result.vendor_history && (
+              <p className="muted small">Vendor history: {(result.vendor_history.late_rate * 100).toFixed(1)}% late across {result.vendor_history.count} shipments.</p>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ReportPage({ options }) {
+  const [form, setForm] = useState({ facility: "", district: "", country: "Rwanda", product_group: "ARV", note: "" });
+  const [reports, setReports] = useState([]);
+  const [msg, setMsg] = useState("");
+
+  const load = () => api("/reports").then(setReports).catch((e) => setMsg(e.message));
+  useEffect(() => { load(); }, []);
+
+  const set = (k) => (v) => setForm({ ...form, [k]: v });
+
+  async function submit(e) {
+    e.preventDefault();
+    try {
+      await api("/reports", { method: "POST", body: JSON.stringify(form) });
+      setMsg("Shortage reported.");
+      setForm({ ...form, facility: "", district: "", note: "" });
+      load();
+    } catch (err) {
+      setMsg(err.message);
+    }
+  }
+
+  async function restock(id) {
+    try {
+      await api("/reports/" + id + "/restock", { method: "PATCH" });
+      setMsg("Marked as restocked.");
+      load();
+    } catch (err) {
+      setMsg(err.message);
+    }
+  }
+
+  return (
+    <div className="grid two">
+      <form className="card" onSubmit={submit}>
+        <h2>Report a shortage</h2>
+        <Field label="Facility name"><input required value={form.facility} onChange={(e) => set("facility")(e.target.value)} /></Field>
+        <Field label="District"><input required value={form.district} onChange={(e) => set("district")(e.target.value)} /></Field>
+        <Field label="Country"><Select value={form.country} onChange={set("country")} items={options.countries} /></Field>
+        <Field label="Product"><Select value={form.product_group} onChange={set("product_group")} items={options.product_groups} /></Field>
+        <Field label="Note (optional)"><input value={form.note} onChange={(e) => set("note")(e.target.value)} /></Field>
+        <button className="btn">Submit report</button>
+        {msg && <p className="muted small">{msg}</p>}
+      </form>
+
+      <div className="card">
+        <h2>Reports</h2>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>Facility</th><th>District</th><th>Product</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {reports.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.facility}</td>
+                  <td>{r.district}, {r.country}</td>
+                  <td>{r.product_group}</td>
+                  <td><span className={"pill " + r.status}>{r.status}</span></td>
+                  <td>{r.status === "shortage" && <button className="btn small" onClick={() => restock(r.id)}>Mark restocked</button>}</td>
+                </tr>
+              ))}
+              {reports.length === 0 && <tr><td colSpan="5" className="muted">No reports yet.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardPage() {
+  const [data, setData] = useState(null);
+  const [msg, setMsg] = useState("");
+
+  const load = () => api("/dashboard").then(setData).catch((e) => setMsg(e.message));
+  useEffect(() => { load(); }, []);
+
+  async function seed() {
+    await api("/seed", { method: "POST" });
+    load();
+  }
+
+  if (!data) return <div className="card"><p className="muted">{msg || "Loading..."}</p></div>;
+
+  return (
+    <div>
+      <div className="grid four">
+        <div className="card stat"><span className="muted">Total reports</span><strong>{data.total_reports}</strong></div>
+        <div className="card stat"><span className="muted">Open shortages</span><strong>{data.open_shortages}</strong></div>
+        <div className="card stat"><span className="muted">Restocked</span><strong>{data.restocked}</strong></div>
+        <div className="card stat"><span className="muted">Avg restock (days)</span><strong>{data.avg_restock_days === null ? "-" : data.avg_restock_days}</strong></div>
+      </div>
+      <div className="card">
+        <div className="row">
+          <h2>District bottlenecks</h2>
+          <button className="btn small" onClick={seed}>Add demo reports</button>
+        </div>
+        <p className="muted small">Open shortages combined with each country's historical late-delivery rate (overall: {(data.overall_late_rate * 100).toFixed(1)}%).</p>
+        <div className="table-wrap">
+          <table>
+            <thead><tr><th>District</th><th>Country</th><th>Open</th><th>Restocked</th><th>Historical late rate</th><th>Attention</th></tr></thead>
+            <tbody>
+              {data.districts.map((d, i) => (
+                <tr key={i}>
+                  <td>{d.district}</td>
+                  <td>{d.country}</td>
+                  <td>{d.open}</td>
+                  <td>{d.restocked}</td>
+                  <td>
+                    <div className="bar slim"><div className="fill medium" style={{ width: Math.min(100, d.country_late_rate * 100 * 2) + "%" }} /></div>
+                    {(d.country_late_rate * 100).toFixed(1)}%
+                  </td>
+                  <td><span className={"pill " + d.attention}>{d.attention}</span></td>
+                </tr>
+              ))}
+              {data.districts.length === 0 && <tr><td colSpan="6" className="muted">No reports yet. Use "Add demo reports" or submit a shortage.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [options, setOptions] = useState(null);
+  const [tab, setTab] = useState("predict");
+  const [health, setHealth] = useState(null);
+
+  useEffect(() => {
+    api("/options").then(setOptions);
+    api("/health").then(setHealth);
+  }, []);
+
+  if (!options) return <p className="muted center">Loading PulseChain...</p>;
+
+  const tabs = [["predict", "Predict risk"], ["report", "Report shortage"], ["dashboard", "Dashboard"]];
+
+  return (
+    <div>
+      <header>
+        <div className="brand">PulseChain <span>HIV/ARV supply-chain early warning</span></div>
+        <nav>
+          {tabs.map(([key, label]) => (
+            <button key={key} className={tab === key ? "tab active" : "tab"} onClick={() => setTab(key)}>{label}</button>
+          ))}
+        </nav>
+      </header>
+      <main>
+        {health && !health.model_loaded && (
+          <div className="notice">Model file not found: predictions use a simple heuristic. Place lgbm_pipeline.joblib in app/models.</div>
+        )}
+        {tab === "predict" && <PredictPage options={options} />}
+        {tab === "report" && <ReportPage options={options} />}
+        {tab === "dashboard" && <DashboardPage />}
+      </main>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

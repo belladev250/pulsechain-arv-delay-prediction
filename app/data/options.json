@@ -1,0 +1,73 @@
+{
+ "countries": [
+  "Rwanda",
+  "Uganda",
+  "Tanzania",
+  "Kenya",
+  "Burundi",
+  "South Sudan",
+  "Ethiopia"
+ ],
+ "shipment_modes": [
+  "Air",
+  "Air Charter",
+  "Ocean",
+  "Truck",
+  "Unknown"
+ ],
+ "inco_terms": [
+  "CIP",
+  "DAP",
+  "DDP",
+  "DDU",
+  "EXW",
+  "FCA",
+  "N/A - From RDC"
+ ],
+ "fulfill_via": [
+  "Direct Drop",
+  "From RDC"
+ ],
+ "product_groups": [
+  "ANTM",
+  "ARV",
+  "HRDT"
+ ],
+ "vendors": [
+  "ABBVIE LOGISTICS (FORMERLY ABBOTT LOGISTICS BV)",
+  "ASPEN PHARMACARE",
+  "Abbott GmbH & Co. KG",
+  "Aurobindo Pharma Limited",
+  "B&C GROUP S.A.",
+  "BIO-RAD LABORATORIES (FRANCE)",
+  "BIOLYTICAL LABORATORIES INC.",
+  "BRISTOL-MYERS SQUIBB",
+  "CHEMBIO DIAGNOSTIC SYSTEMS, INC.",
+  "CIPLA LIMITED",
+  "EMCURE PHARMACEUTICALS LTD",
+  "EY Laboratories",
+  "GLAXOSMITHKLINE EXPORT LIMITED",
+  "HETERO LABS LIMITED",
+  "Hoffmann-La Roche ltd Basel",
+  "JANSSEN SCIENCES IRELAND UC (FORMERLY JANSSEN R&D IRELAND)",
+  "KAS MEDICS LIMITED",
+  "LAWRENCE LABORATORIES (SUBSIDIARY OF BRISTOL MYERS SQUIBB)",
+  "MEDMIRA EAST AFRICA LTD.",
+  "MERCK SHARP & DOHME IDEA GMBH (FORMALLY MERCK SHARP & DOHME B.V.)",
+  "MICRO LABS LIMITED",
+  "MISSIONPHARMA A/S",
+  "MYLAN LABORATORIES LTD (FORMERLY MATRIX LABORATORIES)",
+  "Orgenics, Ltd",
+  "Premier Medical Corporation Ltd.",
+  "SCMS from RDC",
+  "SETEMA LIMITED PLC",
+  "SHANGHAI KEHUA BIOENGINEERING CO.,LTD.  (KHB)",
+  "STRIDES ARCOLAB LIMITED",
+  "SUB-SAHARAN BIOMEDICAL P.L.C.",
+  "SUN PHARMACEUTICAL INDUSTRIES LTD (RANBAXY LABORATORIES LIMITED)",
+  "SWORDS LABORATORIES",
+  "Standard Diagnostics, Inc.",
+  "TURE PHARMACEUTICALS & MEDICAL SUPPLIES P.L.C.",
+  "Trinity Biotech, Plc"
+ ]
+}

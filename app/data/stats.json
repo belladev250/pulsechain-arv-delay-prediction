@@ -1,0 +1,175 @@
+{
+ "overall_late_rate": 0.12343547690979716,
+ "vendors": {
+  "ABBVIE LOGISTICS (FORMERLY ABBOTT LOGISTICS BV)": {
+   "late_rate": 0.0,
+   "count": 75
+  },
+  "ASPEN PHARMACARE": {
+   "late_rate": 0.0,
+   "count": 35
+  },
+  "Abbott GmbH & Co. KG": {
+   "late_rate": 0.0,
+   "count": 2
+  },
+  "Aurobindo Pharma Limited": {
+   "late_rate": 0.11403508771929824,
+   "count": 114
+  },
+  "B&C GROUP S.A.": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "BIO-RAD LABORATORIES (FRANCE)": {
+   "late_rate": 0.0,
+   "count": 6
+  },
+  "BIOLYTICAL LABORATORIES INC.": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "BRISTOL-MYERS SQUIBB": {
+   "late_rate": 0.0,
+   "count": 16
+  },
+  "CHEMBIO DIAGNOSTIC SYSTEMS, INC.": {
+   "late_rate": 0.0,
+   "count": 36
+  },
+  "CIPLA LIMITED": {
+   "late_rate": 0.0,
+   "count": 41
+  },
+  "EMCURE PHARMACEUTICALS LTD": {
+   "late_rate": 0.0,
+   "count": 22
+  },
+  "EY Laboratories": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "GLAXOSMITHKLINE EXPORT LIMITED": {
+   "late_rate": 0.0,
+   "count": 2
+  },
+  "HETERO LABS LIMITED": {
+   "late_rate": 0.0,
+   "count": 45
+  },
+  "Hoffmann-La Roche ltd Basel": {
+   "late_rate": 0.0,
+   "count": 8
+  },
+  "JANSSEN SCIENCES IRELAND UC (FORMERLY JANSSEN R&D IRELAND)": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "KAS MEDICS LIMITED": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "LAWRENCE LABORATORIES (SUBSIDIARY OF BRISTOL MYERS SQUIBB)": {
+   "late_rate": 0.0,
+   "count": 8
+  },
+  "MEDMIRA EAST AFRICA LTD.": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "MERCK SHARP & DOHME IDEA GMBH (FORMALLY MERCK SHARP & DOHME B.V.)": {
+   "late_rate": 0.0,
+   "count": 22
+  },
+  "MICRO LABS LIMITED": {
+   "late_rate": 0.0,
+   "count": 6
+  },
+  "MISSIONPHARMA A/S": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "MYLAN LABORATORIES LTD (FORMERLY MATRIX LABORATORIES)": {
+   "late_rate": 0.0,
+   "count": 66
+  },
+  "Orgenics, Ltd": {
+   "late_rate": 0.12385321100917432,
+   "count": 218
+  },
+  "Premier Medical Corporation Ltd.": {
+   "late_rate": 0.0,
+   "count": 9
+  },
+  "SCMS from RDC": {
+   "late_rate": 0.1783582089552239,
+   "count": 1340
+  },
+  "SETEMA LIMITED PLC": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "SHANGHAI KEHUA BIOENGINEERING CO.,LTD.  (KHB)": {
+   "late_rate": 0.03773584905660377,
+   "count": 53
+  },
+  "STRIDES ARCOLAB LIMITED": {
+   "late_rate": 0.0,
+   "count": 11
+  },
+  "SUB-SAHARAN BIOMEDICAL P.L.C.": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "SUN PHARMACEUTICAL INDUSTRIES LTD (RANBAXY LABORATORIES LIMITED)": {
+   "late_rate": 0.0,
+   "count": 1
+  },
+  "SWORDS LABORATORIES": {
+   "late_rate": 0.0,
+   "count": 3
+  },
+  "Standard Diagnostics, Inc.": {
+   "late_rate": 0.08163265306122448,
+   "count": 49
+  },
+  "TURE PHARMACEUTICALS & MEDICAL SUPPLIES P.L.C.": {
+   "late_rate": 0.0,
+   "count": 3
+  },
+  "Trinity Biotech, Plc": {
+   "late_rate": 0.008547008547008548,
+   "count": 117
+  }
+ },
+ "countries": {
+  "Burundi": {
+   "late_rate": 0.3877551020408163,
+   "count": 98
+  },
+  "Ethiopia": {
+   "late_rate": 0.05555555555555555,
+   "count": 216
+  },
+  "Kenya": {
+   "late_rate": 0.12612612612612611,
+   "count": 111
+  },
+  "Rwanda": {
+   "late_rate": 0.08604651162790698,
+   "count": 430
+  },
+  "South Sudan": {
+   "late_rate": 0.12804878048780488,
+   "count": 164
+  },
+  "Tanzania": {
+   "late_rate": 0.12716763005780346,
+   "count": 519
+  },
+  "Uganda": {
+   "late_rate": 0.1258023106546855,
+   "count": 779
+  }
+ }
+}
