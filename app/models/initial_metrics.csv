@@ -1,0 +1,5 @@
+Model,Precision,Recall,F1,F2 (recall-weighted),ROC-AUC,PR-AUC,Flagged share,Top-20% precision,Top-20% recall,Lift@20%
+Rule: vendor recent late rate,0.2557,0.8171,0.3895,0.5678,0.7313,0.3565,0.5647,0.3548,0.4024,2.0079
+Logistic Regression,0.1767,1.0,0.3004,0.5177,0.7341,0.402,1.0,0.4086,0.4634,2.3121
+LightGBM (default),0.1995,1.0,0.3327,0.5548,0.781,0.4165,0.8858,0.4086,0.4634,2.3121
+LightGBM (tuned),0.1985,1.0,0.3313,0.5533,0.7676,0.3437,0.8901,0.3441,0.3902,1.947

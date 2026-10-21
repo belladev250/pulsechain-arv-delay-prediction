@@ -1,0 +1,21 @@
+{
+ "numeric": [
+  "vendor_recent_late_rate",
+  "country_recent_late_rate",
+  "global_recent_late_rate",
+  "vendor_past_late_rate"
+ ],
+ "categorical": [],
+ "lag_days": 60,
+ "windows": {
+  "vendor": 20,
+  "country": 50,
+  "global": 100
+ },
+ "feature_set": "H recent rates + vendor history",
+ "final_model": "LightGBM (tuned)",
+ "versions": {
+  "sklearn": "1.6.1",
+  "lightgbm": "4.6.0"
+ }
+}

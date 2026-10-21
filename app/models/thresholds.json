@@ -1,0 +1,8 @@
+{
+ "mode": "percentile",
+ "medium": 0.0674,
+ "high": 0.1793,
+ "medium_share": 0.25,
+ "high_share": 0.15,
+ "source": "percentiles of out-of-fold validation scores on the development set (test set not used)"
+}

@@ -9,6 +9,8 @@ export default function ReportPage({ options }) {
   const [form, setForm] = useState({ facility: "", district: "", country: "Rwanda", product_group: "ARV", note: "" });
   const [reports, setReports] = useState([]);
   const [message, setMessage] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const load = () => api("/reports").then(setReports).catch((e) => setMessage(e.message));
   useEffect(() => {
@@ -39,22 +41,46 @@ export default function ReportPage({ options }) {
     }
   }
 
+  async function remove(id) {
+    if (!window.confirm("Delete this report?")) return;
+    try {
+      await api(`/reports/${id}`, { method: "DELETE" });
+      setMessage("Report deleted.");
+      load();
+    } catch (err) {
+      setMessage(err.message);
+    }
+  }
+
+  const visible = reports.filter((r) => {
+    if (filter === "open" && r.status !== "shortage") return false;
+    if (filter === "restocked" && r.status !== "restocked") return false;
+    const text = `${r.facility} ${r.district} ${r.country} ${r.product_group}`.toLowerCase();
+    return text.includes(search.toLowerCase());
+  });
+
   return (
     <div className="grid gap-6 lg:grid-cols-5">
       <div className="lg:col-span-2">
         <Card title="Report a shortage">
           <form onSubmit={submit}>
             <Field label="Facility name">
-              <input required className={inputClass} value={form.facility} onChange={(e) => set("facility")(e.target.value)} />
+              <input required list="facility-list" className={inputClass} value={form.facility} onChange={(e) => set("facility")(e.target.value)} />
             </Field>
             <Field label="District">
-              <input required className={inputClass} value={form.district} onChange={(e) => set("district")(e.target.value)} />
+              <input required list="district-list" className={inputClass} value={form.district} onChange={(e) => set("district")(e.target.value)} />
             </Field>
             <Field label="Country"><Select value={form.country} onChange={set("country")} items={options.countries} /></Field>
             <Field label="Product"><Select value={form.product_group} onChange={set("product_group")} items={options.product_groups} /></Field>
             <Field label="Note (optional)">
               <input className={inputClass} value={form.note} onChange={(e) => set("note")(e.target.value)} />
             </Field>
+            <datalist id="facility-list">
+              {[...new Set(reports.map((r) => r.facility))].map((f) => <option key={f} value={f} />)}
+            </datalist>
+            <datalist id="district-list">
+              {[...new Set(reports.map((r) => r.district))].map((d) => <option key={d} value={d} />)}
+            </datalist>
             <Button>Submit report</Button>
             {message && <p className="mt-3 text-sm text-slate-600">{message}</p>}
           </form>
@@ -62,8 +88,19 @@ export default function ReportPage({ options }) {
       </div>
 
       <div className="lg:col-span-3">
-        <Card title="Reports">
-          <div className="overflow-x-auto">
+        <Card title={`Reports (${visible.length} of ${reports.length})`}>
+          <div className="mb-3 flex flex-wrap gap-2">
+            <input
+              className={inputClass + " max-w-xs"}
+              placeholder="Search facility, district, country"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className="w-40">
+              <Select value={filter} onChange={setFilter} items={["all", "open", "restocked"]} />
+            </div>
+          </div>
+          <div className="max-h-[560px] overflow-auto">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-slate-200 text-xs uppercase text-slate-500">
@@ -75,7 +112,7 @@ export default function ReportPage({ options }) {
                 </tr>
               </thead>
               <tbody>
-                {reports.map((r) => (
+                {visible.map((r) => (
                   <tr key={r.id} className="border-b border-slate-100">
                     <td className="py-2 pr-3 font-medium text-slate-800">{r.facility}</td>
                     <td className="py-2 pr-3">{r.district}, {r.country}</td>
@@ -89,14 +126,20 @@ export default function ReportPage({ options }) {
                         {r.status}
                       </span>
                     </td>
-                    <td className="py-2 text-right">
+                    <td className="space-x-2 whitespace-nowrap py-2 text-right">
                       {r.status === "shortage" && (
                         <Button small onClick={() => restock(r.id)}>Mark restocked</Button>
                       )}
+                      <button
+                        onClick={() => remove(r.id)}
+                        className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-600 hover:bg-slate-50"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
-                {reports.length === 0 && (
+                {visible.length === 0 && (
                   <tr>
                     <td colSpan="5" className="py-4 text-slate-500">No reports yet.</td>
                   </tr>

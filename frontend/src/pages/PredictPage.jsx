@@ -5,6 +5,12 @@ import Field, { inputClass } from "../components/Field.jsx";
 import Select from "../components/Select.jsx";
 import Button from "../components/Button.jsx";
 
+const actions = {
+  high: "Recommended: flag for the coordinator now, consider expediting, an alternative vendor or mode, and check stock at the receiving district.",
+  medium: "Recommended: monitor this shipment and confirm the delivery schedule with the vendor.",
+  low: "No action needed beyond routine tracking.",
+};
+
 const bandStyles = {
   high: { badge: "bg-red-600", fill: "bg-red-500" },
   medium: { badge: "bg-amber-500", fill: "bg-amber-400" },
@@ -28,7 +34,14 @@ export default function PredictPage({ options }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const set = (key) => (value) => setForm({ ...form, [key]: value });
+  const set = (key) => (value) => {
+    const next = { ...form, [key]: value };
+    if (key === "fulfill_via") {
+      if (value === "From RDC") next.inco_term = "N/A - From RDC";
+      else if (next.inco_term === "N/A - From RDC") next.inco_term = "EXW";
+    }
+    setForm(next);
+  };
   const toNumber = (v) => (v === "" ? null : Number(v));
 
   async function submit(e) {
@@ -89,21 +102,27 @@ export default function PredictPage({ options }) {
               {result.risk_band.toUpperCase()} RISK
             </span>
             <p className="mt-3 text-2xl font-semibold text-slate-900">
-              {(result.probability_late * 100).toFixed(1)}% chance of late delivery
+              {result.calibrated ? "Estimated chance of late delivery" : "Delay risk score"}: {(result.probability_late * 100).toFixed(1)}%
             </p>
             <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-slate-200">
               <div className={`h-full ${style.fill}`} style={{ width: `${result.probability_late * 100}%` }} />
             </div>
-            <p className="mt-2 text-xs text-slate-500">Source: {result.source}</p>
+            <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">{actions[result.risk_band]}</p>
+            <p className="mt-2 text-xs text-slate-500">
+              Source: {result.source}.{" "}
+              {result.calibrated
+                ? "The estimate is calibrated on validation data, so it approximates the real late rate for shipments with similar scores."
+                : "The score ranks relative risk; it is not a calibrated probability."}
+            </p>
 
             <h3 className="mb-2 mt-6 text-sm font-semibold text-slate-900">Why this score</h3>
             <ul className="space-y-2">
               {result.reasons.map((r, i) => (
-                <li key={i} className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
-                  <span className="font-medium text-slate-800">{r.feature}</span>
+                <li key={i} className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">
                   <span className={r.direction === "raises risk" ? "text-red-600" : "text-emerald-600"}>
-                    {r.direction}
-                  </span>
+                    {r.direction === "raises risk" ? "▲" : "▼"}
+                  </span>{" "}
+                  {r.plain || r.feature}
                 </li>
               ))}
               {result.reasons.length === 0 && <li className="text-sm text-slate-500">No explanation available.</li>}
@@ -111,8 +130,8 @@ export default function PredictPage({ options }) {
 
             {result.vendor_history && (
               <p className="mt-4 text-xs text-slate-500">
-                Vendor history: {(result.vendor_history.late_rate * 100).toFixed(1)}% late across{" "}
-                {result.vendor_history.count} shipments.
+                Vendor history: {((result.vendor_history.vendor_past_late_rate ?? 0) * 100).toFixed(1)}% late across{" "}
+                {result.vendor_history.vendor_shipment_count_so_far ?? 0} earlier shipments.
               </p>
             )}
           </div>
