@@ -1,0 +1,7 @@
+venv
+node_modules
+frontend/dist
+*.db
+__pycache__
+.git
+app/.secret
