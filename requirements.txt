@@ -1,10 +1,6 @@
-pandas
-numpy
+# Backend and model (also in app/requirements.txt)
+-r app/requirements.txt
+# Notebook only
 matplotlib
 seaborn
-scikit-learn
-lightgbm
-shap
-joblib
 jupyter
-streamlit
