@@ -53,7 +53,7 @@ On the first start the terminal prints "First start: created administrator admin
 | Check | Chrome 156 | Safari 26.1 |
 |---|---|---|
 | Sign in, Predict and Dashboard load without errors | Pass | Pass |
-| Narrow (phone-width) window: tab bar scrolls sideways, nothing overlaps | Pass | Not checked |
+| Narrow (phone-width) window: tab bar scrolls sideways, nothing overlaps | Pass | Pass |
 
 ## 6. Invalid and unauthorised inputs
 
