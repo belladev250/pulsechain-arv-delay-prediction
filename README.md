@@ -10,7 +10,7 @@ PulseChain estimates how likely an HIV/ARV shipment is to arrive late, explains 
 **Data.** PEPFAR/USAID SCMS Delivery History: 2,317 shipments to 7 East African countries (2006-2015). Target: `target_late` = actual delivery date later than scheduled date (about 12% of shipments; 17.7% in the test period).
 
 ## Links
-- GitHub repo: `<add link>`
+
 - Video demo (5-10 min): `<add link>`
 - Technical report (PDF): [View PDF](https://drive.google.com/file/d/17PQSpHnCUyUBLQaYxgWR-y9QbzcDY1tB/view?usp=sharing)
 
