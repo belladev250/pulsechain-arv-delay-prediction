@@ -12,7 +12,7 @@ PulseChain estimates how likely an HIV/ARV shipment is to arrive late, explains 
 ## Links
 - GitHub repo: `<add link>`
 - Video demo (5-10 min): `<add link>`
-- Technical report (PDF): `docs/PulseChain_Technical_Report.pdf` (also: `<add shareable link>`)
+- Technical report (PDF): `https://drive.google.com/file/d/17PQSpHnCUyUBLQaYxgWR-y9QbzcDY1tB/view?usp=sharing`)
 
 ## Technical requirements
 | Component | Version / note |
