@@ -18,7 +18,7 @@ PulseChain estimates how likely an HIV/ARV shipment is to arrive late, explains 
 | Component | Version / note |
 |---|---|
 | Operating system | macOS, Linux or Windows (tested on macOS 26.1, Apple Silicon) |
-| Python | 3.9 or newer (tested on 3.9.6) |
+| Python | 3.9 to 3.12 (tested on 3.9.6). Python 3.13 and newer are not supported: the saved model needs scikit-learn 1.6.1, which has no builds for them |
 | Backend packages | FastAPI, uvicorn, pydantic, pandas, numpy, scikit-learn, LightGBM, SHAP, joblib (see `app/requirements.txt`) |
 | Node.js | 18 or newer; React 18.3, Vite 5.3, Tailwind CSS 3.4, recharts 2.12 (see `frontend/package.json`) |
 | Hardware | Any laptop; CPU only, no GPU. On macOS, LightGBM needs `brew install libomp` |
