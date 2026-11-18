@@ -179,7 +179,7 @@ python3 -m unittest discover -s tests -v   # 28 unit tests: passwords, tokens, r
 python3 scripts/smoke_test.py              # 35 integration checks against the running backend, including errors and role limits
 python3 scripts/perf_test.py               # latency per endpoint and a stress run (20 parallel users, 200 predictions)
 ```
-Last results: 28 of 28 unit tests and 35 of 35 integration checks pass. On an Apple Silicon laptop a single prediction with a SHAP explanation took 5.8 ms on average (slowest 18 ms), and the stress run handled 227 requests per second with no errors. Usability is measured with the System Usability Scale on the Feedback page.
+Last results: 28 of 28 unit tests and 35 of 35 integration checks pass. On an Apple Silicon laptop a single prediction with a SHAP explanation took 6.8 ms on average (slowest 37 ms), and the stress run handled 257 requests per second with no errors. Usability is measured with the System Usability Scale on the Feedback page.
 
 ## Deployment plan
 **Now (local):** laptop, `uvicorn main:app`; CPU only, no GPU needed.

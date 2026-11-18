@@ -30,7 +30,7 @@ On the first start the terminal prints "First start: created administrator admin
 |---|---|---|---|
 | Unit tests | Security and scoring logic must be correct in isolation | `python3 -m unittest discover -s tests -v` | 28 of 28 pass, under 1 second |
 | Integration (API) tests | Check layers work together, including errors and role limits | `python3 scripts/smoke_test.py` (backend running) | 35 of 35 pass |
-| Performance and stress | Requirement: a prediction in under 2 seconds on a laptop | `python3 scripts/perf_test.py` (backend running) | Mean 5.8 ms per prediction; 200 requests from 20 parallel users, 227 requests per second, 0 errors |
+| Performance and stress | Requirement: a prediction in under 2 seconds on a laptop | `python3 scripts/perf_test.py` (backend running) | Mean 6.8 ms per prediction; 200 requests from 20 parallel users, 257 requests per second, 0 errors |
 | Manual click-through by role | Confirm what each role sees in the interface | Section 4 below | Pass |
 | Browser compatibility | Same behaviour in more than one browser and at phone width | Section 5 below | Pass |
 | Usability (SUS) | Judge ease of use with real users | Feedback tab, 3 tasks and 10 questions | **No participants yet (n = 0); no score is reported.** Planned as the next testing step |

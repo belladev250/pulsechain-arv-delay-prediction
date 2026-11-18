@@ -41,7 +41,7 @@ Say: "Each invalid input returns a clear message, not a crash."
 In the terminal:
 1. `python3 -m unittest discover -s tests -v`. Say: "Unit tests: 28 tests for passwords, token tampering, role scope, calibration and risk bands. Chosen because security and scoring logic must be right in isolation. All pass in under a second."
 2. `python3 scripts/smoke_test.py`. Say: "Integration tests: 35 checks against the live server, including every role limit. Chosen to catch access leaks and broken interactions. 35 of 35 pass."
-3. `python3 scripts/perf_test.py`. Say: "Performance and stress test: single prediction averages about 6 ms, far below the 2-second requirement; 200 requests from 20 parallel users, 227 requests per second, no errors."
+3. `python3 scripts/perf_test.py`. Say: "Performance and stress test: single prediction averages about 7 ms, far below the 2-second requirement; 200 requests from 20 parallel users, 257 requests per second, no errors."
 4. Open the Feedback page: "Usability: the System Usability Scale, 3 tasks, anonymous, [state your n and mean SUS]."
 Say what improved: "Testing the refactored code exposed a crash in the model-missing fallback, which I fixed."
 
