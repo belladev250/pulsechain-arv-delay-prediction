@@ -9,6 +9,7 @@ import ModelPage from "./pages/ModelPage.jsx";
 import BatchPage from "./pages/BatchPage.jsx";
 import FeedbackPage from "./pages/FeedbackPage.jsx";
 import UsersPage from "./pages/UsersPage.jsx";
+import PrivacyPage from "./pages/PrivacyPage.jsx";
 
 const ALL_TABS = [
   ["predict", "Predict risk"],
@@ -19,6 +20,7 @@ const ALL_TABS = [
   ["model", "Model"],
   ["feedback", "Feedback"],
   ["users", "Users"],
+  ["privacy", "Privacy"],
 ];
 
 const ROLE_LABEL = { admin: "Administrator", country: "Country manager", district: "District officer" };
@@ -149,6 +151,7 @@ function Shell({ user, onLogout }) {
         {tab === "dashboard" && <DashboardPage user={user} />}
         {tab === "model" && <ModelPage />}
         {tab === "feedback" && <FeedbackPage user={user} />}
+        {tab === "privacy" && <PrivacyPage user={user} onDeleted={onLogout} />}
         {tab === "users" && user.role !== "district" && <UsersPage user={user} />}
       </main>
     </div>

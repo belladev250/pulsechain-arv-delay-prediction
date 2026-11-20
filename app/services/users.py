@@ -6,13 +6,13 @@ from config import DEMO_PASSWORD
 from database import get_db
 
 
-def create_user(conn, name, email, password, role, country, district, approved, is_demo=0):
+def create_user(conn, name, email, password, role, country, district, approved, is_demo=0, consent_at=None):
     pw_hash, salt = auth.hash_password(password)
     conn.execute(
-        "INSERT INTO users (name, email, password_hash, salt, role, country, district, approved, is_demo, created_at) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO users (name, email, password_hash, salt, role, country, district, approved, is_demo, created_at, consent_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (name, email.strip().lower(), pw_hash, salt, role, country, district, approved, is_demo,
-         datetime.utcnow().isoformat(timespec="seconds")))
+         datetime.utcnow().isoformat(timespec="seconds"), consent_at))
 
 
 def bootstrap_users():

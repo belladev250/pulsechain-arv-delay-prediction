@@ -34,6 +34,11 @@ class RegisterIn(BaseModel):
     password: str
     country: str
     district: str
+    consent: bool = False
+
+
+class DeleteAccountIn(BaseModel):
+    password: str
 
 
 class LoginIn(BaseModel):

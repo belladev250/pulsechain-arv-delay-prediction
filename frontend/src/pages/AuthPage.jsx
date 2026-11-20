@@ -3,11 +3,13 @@ import { api, setToken } from "../api.js";
 import Field, { inputClass } from "../components/Field.jsx";
 import Select from "../components/Select.jsx";
 import Button from "../components/Button.jsx";
+import { PolicyText } from "./PrivacyPage.jsx";
 
 export default function AuthPage({ onLogin }) {
   const [mode, setMode] = useState("login");
   const [countries, setCountries] = useState(["Rwanda"]);
-  const [form, setForm] = useState({ name: "", email: "", password: "", country: "Rwanda", district: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", country: "Rwanda", district: "", consent: false });
+  const [showPolicy, setShowPolicy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -35,7 +37,7 @@ export default function AuthPage({ onLogin }) {
         const res = await api("/auth/register", { method: "POST", body: JSON.stringify(form) });
         setMessage(res.message);
         setMode("login");
-        setForm({ ...form, password: "" });
+        setForm({ ...form, password: "", consent: false });
       }
     } catch (err) {
       setError(err.message);
@@ -92,6 +94,22 @@ export default function AuthPage({ onLogin }) {
               <p className="mb-3 text-xs text-slate-500">
                 You will see only your own district's data. A manager must approve your account before you can sign in.
               </p>
+              <label className="mb-3 flex items-start gap-2 text-xs text-slate-600">
+                <input
+                  type="checkbox"
+                  required
+                  className="mt-0.5"
+                  checked={form.consent}
+                  onChange={(e) => set("consent")(e.target.checked)}
+                />
+                <span>
+                  I have read the{" "}
+                  <button type="button" onClick={() => setShowPolicy(true)} className="text-brand-700 underline">
+                    Privacy Policy
+                  </button>{" "}
+                  and I agree that PulseChain stores my name, email and location for this study.
+                </span>
+              </label>
             </>
           )}
           <Button disabled={busy}>{busy ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}</Button>
@@ -99,6 +117,20 @@ export default function AuthPage({ onLogin }) {
           {message && <p className="mt-3 text-sm text-emerald-700">{message}</p>}
         </form>
       </div>
+      <p className="mt-4 text-center text-xs text-slate-500">
+        <button type="button" onClick={() => setShowPolicy(true)} className="underline">Privacy Policy</button>
+      </p>
+      {showPolicy && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-xl bg-white p-6 shadow-lg">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-900">Privacy Policy</h2>
+              <button onClick={() => setShowPolicy(false)} className="text-sm text-slate-500 hover:text-slate-800">Close</button>
+            </div>
+            <PolicyText />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

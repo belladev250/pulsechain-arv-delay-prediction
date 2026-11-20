@@ -126,5 +126,28 @@ if status == 200:
 else:
     check("demo accounts available", False, "start with a fresh database to create the demo accounts")
 
+# privacy: consent is required to register, and a user can delete their own account
+import time
+tmp_email = f"consent.test.{int(time.time())}@example.com"
+person = {"name": "Consent Test", "email": tmp_email, "password": "Test#2026pw", "country": "Rwanda", "district": "Gasabo"}
+status, _ = call("POST", "/api/auth/register", {**person, "consent": False})
+check("registration without consent rejected (422)", status == 422)
+status, _ = call("POST", "/api/auth/register", {**person, "consent": True})
+check("registration with consent accepted (201)", status == 201)
+status, users = call("GET", "/api/users")
+new = [u for u in users if u["email"] == tmp_email] if status == 200 else []
+if new:
+    call("PATCH", f"/api/users/{new[0]['id']}", {"approved": True})
+    status, lg = call("POST", "/api/auth/login", {"email": tmp_email, "password": person["password"]})
+    ttoken = lg.get("token")
+    status, _ = call("DELETE", "/api/auth/me", {"password": "wrong-password"}, token=ttoken)
+    check("delete account needs the right password (401)", status == 401)
+    status, _ = call("DELETE", "/api/auth/me", {"password": person["password"]}, token=ttoken)
+    check("user can delete own account", status == 200)
+    status, _ = call("POST", "/api/auth/login", {"email": tmp_email, "password": person["password"]})
+    check("deleted account can no longer sign in (401)", status == 401)
+else:
+    check("consent test account created", False)
+
 print(f"\n{sum(results)} of {len(results)} checks passed")
 sys.exit(0 if all(results) else 1)

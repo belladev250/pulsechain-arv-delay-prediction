@@ -60,5 +60,9 @@ def init_db():
             created_at TEXT NOT NULL
         )
     """)
+    # Older databases were created before consent was recorded: add the column if it is missing.
+    cols = [r["name"] for r in conn.execute("PRAGMA table_info(users)").fetchall()]
+    if "consent_at" not in cols:
+        conn.execute("ALTER TABLE users ADD COLUMN consent_at TEXT")
     conn.commit()
     conn.close()

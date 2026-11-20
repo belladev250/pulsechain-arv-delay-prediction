@@ -127,7 +127,7 @@ Users must sign in. Each user sees only the data that belongs to their role:
 | Country manager | Their own country (all its districts) | Everything above for the whole country, plus approve and deactivate district officers in that country |
 | Administrator | All countries | Everything, plus change roles, run demo tools, read the usability survey results |
 
-- Anyone can register; new accounts are district officers and must be **approved** by a manager before they can sign in.
+- Anyone can register after accepting the Privacy Policy (consent and its time are stored); new accounts are district officers and must be **approved** by a manager before they can sign in. A signed-in user can delete their own account from the Privacy tab (`DELETE /api/auth/me`, password required).
 - Passwords are stored as salted PBKDF2-SHA256 hashes; sign-in tokens are signed and expire after 12 hours; 5 failed sign-ins lock an email for a minute.
 - The server enforces the scope on every request (reports, dashboard, analytics, shipments, delay causes, predictions). Hiding buttons in the page is not relied on.
 - First start creates an administrator (`admin@pulsechain.local` / `Admin#2026`, override with `PULSECHAIN_ADMIN_EMAIL` and `PULSECHAIN_ADMIN_PASSWORD`) and three demo accounts with password `Demo#2026`: `rwanda.manager@pulsechain.local`, `gasabo@pulsechain.local`, `kampala@pulsechain.local`. Set `PULSECHAIN_DEMO_USERS=0` to skip the demo accounts, and change the administrator password before any real use. Set `PULSECHAIN_SECRET` in production (otherwise a random secret is stored in `app/.secret`).
@@ -146,7 +146,7 @@ Users must sign in. Each user sees only the data that belongs to their role:
 | Method | Path | Purpose |
 |---|---|---|
 | POST | /api/auth/register, /api/auth/login | create an account (pending approval) and sign in |
-| GET | /api/auth/me | the signed-in user |
+| GET, DELETE | /api/auth/me | the signed-in user; delete own account (right to erasure) |
 | GET/PATCH | /api/users, /api/users/{id} | list, approve, deactivate and change roles (managers) |
 | GET | /api/health | status and whether the model is loaded |
 | GET | /api/options | dropdown values |

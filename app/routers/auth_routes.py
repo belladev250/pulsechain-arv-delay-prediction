@@ -1,12 +1,14 @@
 """Registration, sign-in and user management."""
 
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 
 import auth
 from config import OPTIONS
 from database import get_db
 from dependencies import (LIMITER, SECRET, check_choice, current_user, manager_only)
-from schemas import LoginIn, RegisterIn, UserUpdateIn
+from schemas import DeleteAccountIn, LoginIn, RegisterIn, UserUpdateIn
 from services.users import create_user
 from dependencies import PUBLIC_FIELDS
 
@@ -27,6 +29,8 @@ def register(body: RegisterIn):
         raise HTTPException(status_code=422, detail="Enter your name and a valid email address")
     if len(body.password) < auth.MIN_PASSWORD:
         raise HTTPException(status_code=422, detail=f"Password must be at least {auth.MIN_PASSWORD} characters")
+    if not body.consent:
+        raise HTTPException(status_code=422, detail="You must read and accept the Privacy Policy to create an account")
     check_choice(body.country, OPTIONS["countries"], "Country")
     if not (2 <= len(district) <= 100):
         raise HTTPException(status_code=422, detail="District must be 2 to 100 characters")
@@ -34,7 +38,8 @@ def register(body: RegisterIn):
     if conn.execute("SELECT 1 FROM users WHERE email = ?", (email,)).fetchone():
         conn.close()
         raise HTTPException(status_code=409, detail="An account with this email already exists")
-    create_user(conn, name, email, body.password, "district", body.country, district, 0)
+    create_user(conn, name, email, body.password, "district", body.country, district, 0,
+                consent_at=datetime.utcnow().isoformat(timespec="seconds"))
     conn.commit()
     conn.close()
     return {"status": "pending", "message": "Account created. A manager must approve it before you can sign in."}
@@ -61,6 +66,22 @@ def login(body: LoginIn):
 @router.get("/api/auth/me")
 def me(user=Depends(current_user)):
     return user
+
+
+@router.delete("/api/auth/me")
+def delete_my_account(body: DeleteAccountIn, user=Depends(current_user)):
+    """Right to erasure: a user can delete their own account (name, email, password hash, location)."""
+    if user["role"] == "admin":
+        raise HTTPException(status_code=403, detail="The administrator account cannot be deleted from the app")
+    conn = get_db()
+    row = conn.execute("SELECT * FROM users WHERE id = ?", (user["id"],)).fetchone()
+    if row is None or not auth.verify_password(body.password, row["password_hash"], row["salt"]):
+        conn.close()
+        raise HTTPException(status_code=401, detail="Incorrect password. Your account was not deleted.")
+    conn.execute("DELETE FROM users WHERE id = ?", (user["id"],))
+    conn.commit()
+    conn.close()
+    return {"status": "deleted"}
 
 
 @router.get("/api/users")
